@@ -22,6 +22,8 @@ Route::group(['middleware' => ['auth', 'permission:shift.index'], 'prefix' => 's
 
         Route::resource('/activities', 'ActivityController', ['as' => 'shifts']);
 
+        Route::resource('/templates', 'TemplateController', ['as' => 'shifts']);
+
     });
 
 });

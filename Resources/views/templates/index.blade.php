@@ -4,11 +4,11 @@
 
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">Attività</h3>
+            <h3 class="card-title">Modelli</h3>
             <div class="card-options">
-                <a href="{{ route('shifts.activities.create') }}" class="btn btn-green btn-sm">
+                <a href="{{ route('shifts.templates.create') }}" class="btn btn-green btn-sm">
                     <span class="fe fe-plus"></span>
-                    Aggiungi attività
+                    Aggiungi modello
                 </a>
                 &nbsp;
                 <form action="">
@@ -30,26 +30,24 @@
                 <thead>
                 <tr>
                     <th>Nome</th>
-                    <th>Locale</th>
-                    <th>Mansioni</th>
+                    <th>Attività</th>
                     <th></th>
                 </tr>
                 </thead>
                 <tbody>
-                @foreach($activities as $activity)
+                @foreach($templates as $template)
                     <tr>
 
-                        <td>{{ $activity->name }}</td>
-                        <td>@if($activity->local) {{ $activity->local->name }} @endif</td>
-                        <td>{{ $activity->tasks->pluck('name')->implode(', ') }}</td>
+                        <td>{{ $template->name }}</td>
+                        <td>{{ $template->activities->pluck('name')->implode(', ') }}</td>
                         <td>
-                            <a href="{{ route('shifts.activities.edit', $activity->id) }}" class="icon"><i class="fe fe-edit"></i></a>
-                            <a href="#" class="icon" onclick="if(confirm('Vuoi davvero eliminare questo elemento?')){$('#del-{{ $activity->id }}').submit()}">
+                            <a href="{{ route('shifts.templates.edit', $template->id) }}" class="icon"><i class="fe fe-edit"></i></a>
+                            <a href="#" class="icon" onclick="if(confirm('Vuoi davvero eliminare questo elemento?')){$('#del-{{ $template->id }}').submit()}">
                                 <i class="text-red fe fe-trash"></i>
                             </a>
                             <form style="visibility: hidden"
                                   method="POST"
-                                  id="del-{{ $activity->id }}" action="{{ route('shifts.activities.destroy', $activity->id) }}">
+                                  id="del-{{ $template->id }}" action="{{ route('shifts.templates.destroy', $template->id) }}">
                                 @csrf
                                 @method('DELETE')
                             </form>
@@ -59,7 +57,7 @@
                 </tbody>
             </table>
             <div class="card-footer text-center align-self-center">
-                {{ $activities->appends(request()->all())->links() }}
+                {{ $templates->appends(request()->all())->links() }}
             </div>
         </div>
     </div>
