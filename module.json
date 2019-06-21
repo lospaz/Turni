@@ -1,0 +1,11 @@
+{
+	"name": "Shift",
+	"alias": "Shift",
+	"description": "Work shifts manager",
+	"authors": {
+		"name": "",
+		"email": ""
+	},
+	"type": "dev",
+	"version": "0.0.0"
+}
