@@ -11,8 +11,8 @@
                 <div class="card-header">Menù</div>
                 <div class="list-group list-group-transparent mb-0">
 
-                    <a href="{{ route('manager.settings.index') }}"
-                       class="list-group-item list-group-item-action @if(Route::is('manager.settings.*')) active @endif">
+                    <a href="{{ route('shifts.calendar.index') }}"
+                       class="list-group-item list-group-item-action @if(Route::is('shifts.calendar.*')) active @endif">
                         <span class="icon mr-3"><i class="fas fa-user-clock"></i></span>Turni
                     </a>
 

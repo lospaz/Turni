@@ -2,6 +2,7 @@
 
 namespace Modules\Shift\Providers;
 
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +23,10 @@ class ShiftServiceProvider extends ServiceProvider
         $this->registerApiRoutes();
         $this->loadMigrationsFrom(__DIR__  . '/../Database/Migrations');
         $this->registerFactories();
+
+        Validator::extendImplicit('this_or_that', function ($attribute, $value, $parameters, $validator) {
+            return (bool) (!empty($value) ^ (array_key_exists($parameters[0], $validator->getData()) && !empty($validator->getData()[$parameters[0]])));
+        });
     }
 
     /**

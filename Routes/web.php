@@ -8,9 +8,9 @@
 
 Route::group(['middleware' => ['auth', 'permission:shift.index'], 'prefix' => 'shifts'], function (){
 
-    Route::get('/', function (){
-        return view('Shift::index');
-    })->name('shifts.index');
+    Route::resource('/calendar', 'CalendarController', ['as' => 'shifts']);
+
+    Route::get('/calendar/data/source', 'CalendarController@source')->name('shifts.calendar.source');
 
     Route::group(['middleware' => [
         'permission:shift.create', 'permission:shift.edit', 'permission:shift.delete'
