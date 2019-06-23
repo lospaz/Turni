@@ -1,4 +1,4 @@
-@extends('Shift::shift')
+@extends('Shift::layouts.shift')
 
 @section('shift.content')
 

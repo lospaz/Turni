@@ -1,8 +1,4 @@
-@extends('layouts.app')
-
-@push('css')
-    <link href="{{ asset('/css/custom.css') }}" rel="stylesheet" />
-@endpush
+@extends('Shift::layouts.app')
 
 @section('content')
     <div class="row">
@@ -10,11 +6,6 @@
             <div class="card">
                 <div class="card-header">Menù</div>
                 <div class="list-group list-group-transparent mb-0">
-
-                    <a href="{{ route('shifts.calendar.index') }}"
-                       class="list-group-item list-group-item-action @if(Route::is('shifts.calendar.*')) active @endif">
-                        <span class="icon mr-3"><i class="fas fa-user-clock"></i></span>Turni
-                    </a>
 
                     <a href="{{ route('shifts.templates.index') }}"
                        class="list-group-item list-group-item-action @if(Route::is('shifts.templates.*')) active @endif">

@@ -6,27 +6,31 @@
 |--------------------------------------------------------------------------
 */
 
-Route::group(['middleware' => ['auth', 'permission:shift.index'], 'prefix' => 'shifts'], function (){
+Route::group(['domain' => 'turni.' . config('app.normalurl')], function () {
 
-    Route::resource('/calendar', 'CalendarController', ['as' => 'shifts']);
+    Route::group(['middleware' => ['auth', 'permission:shift.index'], 'prefix' => 'shifts'], function () {
 
-    Route::get('/calendar/data/source', 'CalendarController@source')->name('shifts.calendar.source');
+        Route::resource('/calendar', 'CalendarController', ['as' => 'shifts']);
 
-    Route::get('/calendar/shift/{id}', 'CalendarController@shift')->name('shifts.shift.show');
+        Route::get('/calendar/data/source', 'CalendarController@source')->name('shifts.calendar.source');
 
-    Route::group(['middleware' => [
-        'permission:shift.create', 'permission:shift.edit', 'permission:shift.delete'
-    ]], function (){
+        Route::get('/calendar/shift/{id}', 'CalendarController@shift')->name('shifts.shift.show');
 
-        Route::resource('/locals', 'LocalController', ['as' => 'shifts']);
+        Route::group(['middleware' => [
+            'permission:shift.create', 'permission:shift.edit', 'permission:shift.delete'
+        ]], function () {
 
-        Route::resource('/tasks', 'TaskController', ['as' => 'shifts']);
+            Route::resource('/locals', 'LocalController', ['as' => 'shifts']);
 
-        Route::resource('/activities', 'ActivityController', ['as' => 'shifts']);
+            Route::resource('/tasks', 'TaskController', ['as' => 'shifts']);
 
-        Route::resource('/templates', 'TemplateController', ['as' => 'shifts']);
+            Route::resource('/activities', 'ActivityController', ['as' => 'shifts']);
 
-        Route::get('/calendar/shift/{id}/edit', 'CalendarController@shiftEdit')->name('shifts.shift.edit');
+            Route::resource('/templates', 'TemplateController', ['as' => 'shifts']);
+
+            Route::get('/calendar/shift/{id}/edit', 'CalendarController@shiftEdit')->name('shifts.shift.edit');
+        });
+
     });
 
 });

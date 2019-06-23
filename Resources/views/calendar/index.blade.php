@@ -1,4 +1,4 @@
-@extends('Shift::shift')
+@extends('Shift::layouts.app')
 
 @push('css')
     <link href='{{ asset("fullcalendar/packages/core/main.css") }}' rel='stylesheet' />
@@ -8,7 +8,7 @@
     <link href='{{ asset("fullcalendar/packages/resource-timeline/main.css") }}' rel='stylesheet' />
 @endpush
 
-@section('shift.content')
+@section('content')
     <div id='calendar' class="card p-1"></div>
 @endsection
 

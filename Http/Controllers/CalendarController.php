@@ -35,6 +35,9 @@ class CalendarController extends Controller
      */
     public function create(Request $request)
     {
+        if(!Auth::user()->can('shift.create'))
+            abort(403);
+
         $start = Carbon::createFromTimestamp($request->start);
         $end = Carbon::createFromTimestamp($request->end);
 
@@ -59,6 +62,9 @@ class CalendarController extends Controller
      */
     public function store(ShiftRequest $request)
     {
+        if(!Auth::user()->can('shift.create'))
+            abort(403);
+
         $shift = new Shift;
         $shift->template_id = $request->template_id;
         $shift->start = Carbon::createFromFormat("d/m/Y H:i", "$request->startDate $request->startHour");
