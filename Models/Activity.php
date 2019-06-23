@@ -21,4 +21,8 @@ class Activity extends Model {
         return $this->belongsToMany(Template::class, 'template_has_activities',
             'activity_id', 'template_id');
     }
+
+    public function getTasks(){
+        return $this->tasks->map->only(['name', 'description'])->toJson();
+    }
 }

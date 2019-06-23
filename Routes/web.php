@@ -12,6 +12,8 @@ Route::group(['middleware' => ['auth', 'permission:shift.index'], 'prefix' => 's
 
     Route::get('/calendar/data/source', 'CalendarController@source')->name('shifts.calendar.source');
 
+    Route::get('/calendar/shift/{id}', 'CalendarController@shift')->name('shifts.shift.show');
+
     Route::group(['middleware' => [
         'permission:shift.create', 'permission:shift.edit', 'permission:shift.delete'
     ]], function (){
@@ -24,6 +26,7 @@ Route::group(['middleware' => ['auth', 'permission:shift.index'], 'prefix' => 's
 
         Route::resource('/templates', 'TemplateController', ['as' => 'shifts']);
 
+        Route::get('/calendar/shift/{id}/edit', 'CalendarController@shiftEdit')->name('shifts.shift.edit');
     });
 
 });

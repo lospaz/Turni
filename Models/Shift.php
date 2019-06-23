@@ -11,6 +11,8 @@ class Shift extends Model {
 
     protected $fillable = ['template_id'];
 
+    protected $dates = ['start', 'end'];
+
     public function template(){
         return $this->belongsTo(Template::class);
     }
@@ -36,4 +38,10 @@ class Shift extends Model {
         });
     }
 
+    public function getActivities(){
+        if($this->template)
+            return $this->template->activities;
+        else
+            return $this->activities;
+    }
 }

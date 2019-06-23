@@ -58,6 +58,32 @@
                 select: function (info) {
                     window.location.href = '{{ route("shifts.calendar.create")  }}?start=' + (new Date(info.start).getTime() / 1000)
                         + '&end=' + (new Date(info.end).getTime() / 1000 ) + '&resource_id=' + info.resource._resource.id;
+                },
+                eventClick: function (info) {
+                    let id = info.event.id;
+                    let url = '{{ route("shifts.shift.show", ":id") }}';
+                    url = url.replace(':id', id);
+                    $.get(url, function (data) {
+                        $('#shiftModal').modal('show');
+                        $('#shiftContent').html(data.view);
+
+                        if(!data.edit)
+                            $('#shiftEdit').hide();
+                        else {
+                            $('#shiftEdit').show();
+                            let href = $('#shiftEdit').attr('href');
+                            $('#shiftEdit').attr('href', href.replace(':id', id));
+                        }
+
+                        if(!data.delete)
+                            $('#shiftDelete').hide();
+                        else {
+                            $('#shiftDelete').show();
+                            let action = $('#shiftDeleteForm').attr('action');
+                            $('#shiftDeleteForm').attr('action', action.replace(':id', id));
+                        }
+
+                    });
                 }
             });
 
@@ -65,4 +91,32 @@
         });
 
     </script>
+
+    <div class="modal" id="shiftModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Turno</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="shiftContent"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
+                    <a href="{{ route('shifts.calendar.edit', ':id') }}" id="shiftEdit" class="btn btn-warning">Modifica</a>
+                    <button type="button"
+                            onclick="if(confirm('Vuoi davvero eliminare questo elemento?')){$('#shiftDeleteForm').submit()}"
+                            id="shiftDelete" class="btn btn-danger">Elimina</button>
+                </div>
+                <form style="visibility: hidden"
+                      method="POST"
+                      id="shiftDeleteForm" action="{{ route('shifts.calendar.destroy', ':id') }}">
+                    @csrf
+                    @method('DELETE')
+                </form>
+            </div>
+        </div>
+    </div>
 @endpush

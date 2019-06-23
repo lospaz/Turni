@@ -7,6 +7,7 @@ use App\User;
 use Carbon\Carbon;
 use function foo\func;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Modules\Shift\Http\Requests\ShiftRequest;
 use Modules\Shift\Models\Activity;
@@ -106,7 +107,18 @@ class CalendarController extends Controller
      */
     public function edit($id)
     {
-        //
+        if(!Auth::user()->can('shift.edit'))
+            abort(403);
+
+        $shift = Shift::findOrFail($id);
+        $activities = Activity::orderBy('name')->get();
+        $template = Template::orderBy('name')->get();
+
+        return view('Shift::calendar.edit', [
+            "shift" => $shift,
+            "activities" => $activities,
+            "template" => $template
+        ]);
     }
 
     /**
@@ -116,9 +128,39 @@ class CalendarController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(ShiftRequest $request, $id)
     {
-        //
+        if(!Auth::user()->can('shift.edit'))
+            abort(403);
+
+        $shift = Shift::findOrFail($id);
+        $shift->template_id = $request->template_id;
+        $shift->start = Carbon::createFromFormat("d/m/Y H:i", "$request->startDate $request->startHour");
+        $shift->end = Carbon::createFromFormat("d/m/Y H:i", "$request->endDate $request->endHour");
+        $shift->save();
+
+        ShiftHasActivities::where('shift_id', $shift->id)->delete();
+        if($request->has('activities') && $shift){
+            foreach ($request->activities as $activity) {
+                ShiftHasActivities::create([
+                    'shift_id' => $shift->id,
+                    'activity_id' => $activity
+                ]);
+            }
+        }
+
+        if($request->has('users') && $shift){
+            ShiftHasUsers::where('shift_id', $shift->id)->delete();
+            foreach ($request->users as $user) {
+                ShiftHasUsers::create([
+                    'shift_id' => $shift->id,
+                    'user_id' => $user
+                ]);
+            }
+        }
+
+        flash()->success("Il turno è stato salvato con successo");
+        return redirect()->route('shifts.calendar.index');
     }
 
     /**
@@ -129,7 +171,16 @@ class CalendarController extends Controller
      */
     public function destroy($id)
     {
-        //
+        if(!Auth::user()->can('shift.delete'))
+            abort(403);
+
+        $shift = Shift::findOrFail($id);
+        ShiftHasActivities::where('shift_id', $shift->id)->delete();
+        ShiftHasUsers::where('shift_id', $shift->id)->delete();
+        $shift->delete();
+
+        flash()->success('Turno eliminato con successo.');
+        return redirect()->route('shifts.calendar.index');
     }
 
     public function source(Request $request){
@@ -145,9 +196,10 @@ class CalendarController extends Controller
         $s = [];
         foreach ($shifts as $shift) {
             $data = [
+                "id" => $shift->id,
                 "resourceId" => $shift->resourceId,
-                "start" => $shift->start,
-                "end" => $shift->end,
+                "start" => $shift->start->format('Y-m-d H:i'),
+                "end" => $shift->end->format('Y-m-d H:i'),
                 "title" => self::getShiftTitle($shift)
             ];
             array_push($s, $data);
@@ -161,5 +213,19 @@ class CalendarController extends Controller
             return $shift->template->name;
         else
             return $shift->activities->pluck('name')->implode(', ');
+    }
+
+    public function shift($id){
+        $shift = Shift::findOrFail($id);
+
+        $view = view('Shift::calendar.show', [
+            'shift' => $shift
+        ])->render();
+
+        return response()->json([
+            'view' => $view,
+            'edit' => Auth::user()->can('shift.edit'),
+            'delete' => Auth::user()->can('shift.delete')
+        ]);
     }
 }
