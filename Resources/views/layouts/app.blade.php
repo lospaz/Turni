@@ -51,6 +51,9 @@
                             </a>
                             @auth
                                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+                                    <a class="dropdown-item" href="{{ route('user.profile') }}">
+                                        <i class="dropdown-icon fe fe-user"></i> Profilo
+                                    </a>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item logoutCheck" href="#">
                                         <i class="dropdown-icon fe fe-log-out"></i> Esci
